@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.4;
 
-contract Invest {
+import "./Token.sol";
+
+contract Invest is Token {
     // mapping (address => uint256) public investors;
     struct investor {
         uint lendingDate; 
@@ -19,5 +21,12 @@ contract Invest {
 
     function investInMPay(uint256 _amount) public validateInvestor(_amount) {
         Investors[msg.sender] = investor(block.timestamp, _amount);
+        // if(_amount > 5 ether){
+        //     transferTokenToInvestor(msg.sender, (_amount * 1000) + (_amount / 20));
+        // } else if (_amount > 1 ether) {
+        //     transferTokenToInvestor(msg.sender, (_amount * 1000) + (_amount / 10));
+        // } else {
+        // }
+        transferTokenToInvestor(msg.sender, _amount);
     }
 }

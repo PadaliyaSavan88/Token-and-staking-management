@@ -63,7 +63,7 @@ module.exports = {
          enabled: false,
          runs: 200
        },
-       version: "0.8.16"  
+       version: "0.8.4"  
     },
   },
 };

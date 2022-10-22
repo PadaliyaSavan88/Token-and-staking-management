@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.4;
 
 contract Token {
 
@@ -9,9 +9,10 @@ contract Token {
     string public symbol = "MINDPAY";
     uint256 public decimals = 18;
     uint256 public totalSupply;
+    address public owner;
 
     //Event
-    event Transfer(address indexed from, address indexed to, uint256 _value);
+    event Transfer(address indexed from, address indexed to, uint256 _value, uint256 balance);
     event Approval(address indexed owner, address indexed spender, uint256 value);  
 
     //Track Balance
@@ -19,8 +20,15 @@ contract Token {
     mapping(address => mapping(address => uint256)) public allowance;
 
     constructor() {
+        owner = msg.sender;
         totalSupply = 1000000 * (10 ** decimals);
-        balanceOf[msg.sender] = totalSupply;
+        balanceOf[owner] = totalSupply;
+    }
+
+    function transferTokenToInvestor(address _to, uint256 _value) public returns (bool success) {
+       require(balanceOf[owner] >= _value);
+        _transfer(owner, _to, _value);
+        return true; 
     }
 
     // Transfer
@@ -32,9 +40,9 @@ contract Token {
 
     function _transfer(address _from, address _to, uint256 _value) internal {
         require(_to != address(0));
-        balanceOf[_from] = balanceOf[_from] - _value;
-        balanceOf[_to] = balanceOf[_to] + _value;
-        emit Transfer(_from, _to, _value);
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
+        emit Transfer(_from, _to, _value, balanceOf[_to]);
     }
 
     // Approve Tokens

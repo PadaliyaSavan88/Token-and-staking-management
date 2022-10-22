@@ -46,6 +46,26 @@ contract('Token', ([deployer, receiver, exchange]) => {
         })
     })
 
+    describe('transfer for investors', () => {
+        let result
+        let amount
+        describe('success', () => {
+            beforeEach(async () => {
+                amount = ether(1)
+                result = await token.transferTokenToInvestor(receiver, amount, { from: deployer })
+            })
+
+            it('transfer token', async () => {
+                let balanceOf;
+                
+                balanceOf = await token.balanceOf(deployer);
+                balanceOf.toString().should.equal(tokens(999999).toString());
+                balanceOf = await token.balanceOf(receiver);
+                balanceOf.toString().should.equal(tokens(1).toString()); 
+            })
+        })
+    })
+
     describe('sending tokens', () => {
         let result
         let amount
