@@ -21,6 +21,11 @@ contract Invest is Token, Liquidity {
         _;
     }
 
+    modifier checkTimestamp() {
+        require(Investors[msg.sender].amount == 0, "only stake holder can operate stake");
+        _;
+    }
+
     function investInMPay(uint256 _amount) public validateInvestor(_amount) {
         Investors[msg.sender] = investor(block.timestamp, block.timestamp + 15 minutes, _amount);
         if(_amount > 5 ether){
@@ -30,5 +35,9 @@ contract Invest is Token, Liquidity {
         } else {
             transferTokenToInvestor(msg.sender, _amount * 1000);
         }
+    }
+
+    function cancelInvestment() public checkTimestamp {
+        transfer(msg.sender, Investors[msg.sender].amount);
     }
 }
