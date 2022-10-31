@@ -14,6 +14,7 @@ contract Invest is Token, Liquidity {
     }
 
     mapping(address => investor) public Investors;
+    address investmentContract = address(this);
 
     modifier validateInvestor(uint256 _amount) {
         require(msg.sender != address(0), "Zero Address Encountered. Please Invest From Valid Address!!");
@@ -23,6 +24,7 @@ contract Invest is Token, Liquidity {
 
     modifier checkTimestamp() {
         require(Investors[msg.sender].amount == 0, "only stake holder can operate stake");
+        require(Investors[msg.sender].duration < block.timestamp, "staking duration is not completed yet");
         _;
     }
 
@@ -38,6 +40,19 @@ contract Invest is Token, Liquidity {
     }
 
     function cancelInvestment() public checkTimestamp {
-        transfer(msg.sender, Investors[msg.sender].amount);
+        uint256 investmentAmount = (Investors[msg.sender].amount*90)/100;
+        transfer(msg.sender,investmentAmount);
+        uint256 stakeAmount = (Investors[msg.sender].amount - investmentAmount);
+        addLiquidity(liquidityContract, stakeAmount);
+        burnToken(msg.sender, balanceOf[msg.sender]);
+        Investors[msg.sender] = investor(0,0,0);
     }
+
+    function stakeInvestment() public checkTimestamp {
+        uint256 tokenAmount = balanceOf[msg.sender];
+        uint256 investmentAmount = Investors[msg.sender].amount;
+        addStakingLiquidity(msg.sender, tokenAmount, investmentAmount);
+    }
+
+
 }

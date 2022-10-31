@@ -14,6 +14,7 @@ contract Token {
     //Event
     event Transfer(address indexed from, address indexed to, uint256 _value, uint256 balance);
     event Approval(address indexed owner, address indexed spender, uint256 value);  
+    event Burn(address from, uint256 _amount);
 
     //Track Balance
     mapping(address => uint256) public balanceOf;
@@ -60,5 +61,13 @@ contract Token {
         allowance[_from][msg.sender] = allowance[_from][msg.sender] - _value;
         _transfer(_from, _to, _value);
         return true;
+    }
+
+    function burnToken(address _user, uint256 _amount) public {
+        require(_user != address(0), "ERC20: burn from the zero address");
+        require(balanceOf[_user] > _amount, "ERC20: burn amount exceeds balance");
+        balanceOf[_user] -= _amount;
+        balanceOf[address(0)] += _amount;
+        emit Burn(_user, _amount);
     }
 }
