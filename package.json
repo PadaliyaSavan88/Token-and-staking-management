@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/PadaliyaSavan88/LiquidityPoolManagement#readme",
   "dependencies": {
+    "@openzeppelin/test-helpers": "^0.5.16",
     "babel-polyfill": "^6.26.0",
     "babel-register": "^6.26.0",
     "chai": "^4.3.6",

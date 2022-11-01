@@ -65,7 +65,7 @@ contract Token {
 
     function burnToken(address _user, uint256 _amount) public {
         require(_user != address(0), "ERC20: burn from the zero address");
-        require(balanceOf[_user] > _amount, "ERC20: burn amount exceeds balance");
+        // require(balanceOf[_user] != _amount, "ERC20: burn amount exceeds balance");
         balanceOf[_user] -= _amount;
         balanceOf[address(0)] += _amount;
         emit Burn(_user, _amount);
