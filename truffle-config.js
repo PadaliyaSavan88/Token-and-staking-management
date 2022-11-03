@@ -47,6 +47,10 @@ module.exports = {
     }
   },
 
+  
+  contracts_directory: './contracts',
+  contracts_build_directory: './frontend/src/artifacts',
+
   // Contract configurations
   // contracts_directory: './src/contracts',
   // contracts_builddirectory: './src/abis',

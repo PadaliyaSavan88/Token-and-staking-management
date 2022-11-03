@@ -3,34 +3,52 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import Convert from './components/Convert';
 import Invest from './components/Invest';
 import Records from './components/Records';
-import { useState } from 'react';
+import { Component } from 'react';
+import Token from '../src/artifacts/Token.json'
 const Web3 = require('web3')
 
-function App() {
-  // Modern DApp Browsers
-  let [accounts, setState] = useState
-  let web3;
-  async function componentWillMount() {
-    console.log('function')
-    if (typeof window.ethereum !== undefined) {
-      window.ethereum.send('eth_requestAccounts');
-      let web3 = new Web3(window.ethereum);
+class App extends Component  {
+  componentWillMount() {
+    this.loadBlockchainData()
+  }
 
-      await web3.eth.getAccounts().then(accounts => setState({ accounts }))
-      // this.accounts = result;
-      let contract = new web3.eth.Contract(this.state.ABI, this.state.Address)
-      console.log(accounts)
-      console.log(contract.methods.totalSupply())
+  async loadBlockchainData() {
+    let web3
+    // const web3 = new Web3(Web3.givenProvider || 'http://localhost:7545')
+    if (window.ethereum) {
+      try {
+        web3 = new Web3(window.ethereum)
+        // Request account access if needed
+        await window.ethereum.enable()
+        // Acccounts now exposed
+        // web3.eth.sendTransaction({/* ... */})
+        const networkId = await web3.eth.net.getId();
+        const accounts = await web3.eth.getAccounts()
+        const token = new web3.eth.Contract(Token.abi, Token.networks[networkId].address)
+        const totalSupply = await token.methods.totalSupply().call();
+        const symbol = await token.methods.symbol().call();
+        const name = await token.methods.name().call();
+        const decimals = await token.methods.decimals().call();
+        console.log("name", name)
+        console.log("totalSupply", totalSupply)
+        console.log("symbol", symbol)
+        console.log("decimals", decimals)
+        console.log(accounts)
+      } catch (error) {
+        // User denied account access...
+        console.log("ERROR:", error)
+      }
     }
   }
-  componentWillMount()
-  return (
-    <div className='container mt-4'>
-      <Convert></Convert>
-      <Invest></Invest>
-      <Records></Records>
-    </div>
-  );
+  render() {
+    return (
+      <div className='container mt-4'>
+        <Convert></Convert>
+        <Invest></Invest>
+        <Records></Records>
+      </div>
+    );
+  }
 }
 
 export default App;
